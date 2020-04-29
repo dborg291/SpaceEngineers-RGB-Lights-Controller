@@ -38,9 +38,9 @@ namespace IngameScript
 
         public void Main(string args, UpdateType updateSource)
         {
-            string[] arg;
+            string[] arg = args.Split(';'); ;
 
-            if (Me.CustomData.Equals(""))
+            /*if (Me.CustomData.Equals(""))
             {
                 arg = args.Split(';');
                 Me.CustomData = args;
@@ -48,7 +48,7 @@ namespace IngameScript
             else
             {
                 arg = Me.CustomData.Split(';');
-            }
+            }*/
 
             // Check arguments
             if (arg.Length < 2)
@@ -203,14 +203,21 @@ namespace IngameScript
                 }
                 else // Light is already in fade mode
                 {
+
                     int deltaR = 0;
                     int deltaG = 0;
                     int deltaB = 0;
-                    int nextColorIndex = lightIndex + 1;
-                    if (nextColorIndex == 7)
+                    Echo(customData[2]);
+                    float nextColorIndexFloat = 0;
+                    float.TryParse(customData[2], out nextColorIndexFloat);
+                    int nextColorIndex = Convert.ToInt32(nextColorIndexFloat) + 1;
+
+                    Echo(nextColorIndex.ToString());
+                    if (nextColorIndex >= 7)
                     {
                         nextColorIndex = 0;
                     }
+                    Echo(nextColorIndex.ToString());
                     Color nextColor = new Color(colors[nextColorIndex, 0], colors[nextColorIndex, 1], colors[nextColorIndex, 2]);
                     if(color.R < nextColor.R)// Adjust Red
                     {
@@ -241,7 +248,9 @@ namespace IngameScript
                     Color fadedColor = new Color(color.R + deltaR, color.G + deltaG, color.B + deltaB);
                     if(fadedColor.Equals(nextColor))
                     {
-                        ChangeSetColor(light, fadedColor, radius, intensity, totalLights, "fade;" + nextColorIndex);
+                        /*Echo("Reached Next Color");*/
+                        ChangeSetColor(light, fadedColor, radius, intensity, totalLights, "fade;" + nextColorIndex+1);
+                        break;
                     }
                     else
                     {
@@ -286,7 +295,7 @@ namespace IngameScript
             light.Color = color;
             light.CustomData = color.ToString() + ";" + mode;
             if (radius != 0) light.Radius = radius;
-            if (intensity != 0) light.Intensity = intensity;
+            if (intensity !=  0) light.Intensity = intensity;
         }
 
         public void ChangeSetColor(IMyReflectorLight light, Color color, float radius, float intensity, int numLights, string mode)
